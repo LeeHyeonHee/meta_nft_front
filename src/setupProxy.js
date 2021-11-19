@@ -8,10 +8,10 @@ module.exports = (app) => {
         })
     )
 
-    app.use(
-        createProxyMiddleware('/login', {
-            target: 'http://localhost:8000'
-        })
-    )
+    // app.use(
+    //     createProxyMiddleware('/login', {
+    //         target: 'http://localhost:8000'
+    //     })
+    // )
 }
 

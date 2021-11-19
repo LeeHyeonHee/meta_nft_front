@@ -77,6 +77,7 @@ class login extends Component {
               defaultActiveKey={this.state.type}
               onTabChange={this.onTabChange}
               onSubmit={this.onSubmit}
+              
             >
             <Tab key="tab1" tab="Login">
             {this.state.notice && (
@@ -89,8 +90,8 @@ class login extends Component {
               />
             )}
           </Tab>
-                <UserName name="userId"onChange={this.idChange}/>
-                <Password name="password" onKeyPress={this.handleKeyPress} onChange={this.pwChange}/>
+                <UserName placeholder="userId" name="userId"onChange={this.idChange} style={{paddingLeft:"4%"}}/>
+                <Password placeholder="password" name="password" onKeyPress={this.handleKeyPress} onChange={this.pwChange} style={{paddingLeft:"4%"}}/>
               <div>
                 <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>
                   Keep me logged in

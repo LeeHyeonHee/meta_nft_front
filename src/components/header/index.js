@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { Button, Layout } from "antd";
-import { LogoutOutlined } from '@ant-design/icons';
+import { LogoutOutlined, SearchOutlined } from '@ant-design/icons';
 // import { getCookie, removeCookie } from "../utils/useCookie";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import logoImg from "../../img/logo02.png";
+import Search from "antd/lib/input/Search";
 
 const { Header } = Layout;
 
@@ -44,6 +45,7 @@ export const MainHeader = () => {
             <Button shape="round" icon={<LogoutOutlined />} size={'large'}  style={btnCss} onClick={handlerLogout}>
               Logout
             </Button>
+            <Search placeholder="Search NFT Information!" enterButton="Search" size="large" style={{width: '40%', marginTop: '15px'}}/>
             <span style={{float: 'right', marginRight: '30px'}}> {cookies.userName}님 환영합니다 </span>
             <span style={{float: 'right', marginRight: '30px'}}> 토큰 보유량 : {'511'} TKN </span>
         </Header>

@@ -13,7 +13,7 @@ import Loader from './utils/Loader';
 import { Link } from 'react-router-dom';
 import filetype from "file-type";
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const { Meta } = Card;
 
@@ -32,18 +32,56 @@ const ImgBox = styled.article`
 `;
 
 
-const toBase64 = (arr) => {
+ // const toBase64 = async (arr) => {
+  //   let img = new Buffer.from(arr).toString("base64");
+  //   let a =  new Buffer.from(arr);
+  //   let fileType = await filetype.fromBuffer(a);
+
+  //   return [img, fileType.ext];
+  // }
+  const toBase = async (arr) => {
+    // let img = new Buffer.from(arr).toString("base64");
     let a = new Buffer.from(arr).toString("base64");
+    
+
     return a;
   }
-const Base64 = async (arr) => {
-  let a =  new Buffer.from(arr);
-  let fileType = await filetype.fromBuffer(a);
-
-  return [fileType.ext, a.toString('base64')];
-}
-  
   const HeartIcon = props => <Icon component={HeartSvg} {...props} />
+  
+  const data = [
+    {
+      title: 'Title 1',
+      img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'
+    },
+    {
+      title: 'Title 2',
+      img: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
+    },
+    {
+      title: 'Title 3',
+      img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'
+    },
+    {
+      title: 'Title 4',
+      img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'
+    },
+    {
+      title: 'Title 5',
+      img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'
+    },
+    {
+      title: 'Title 6',
+      img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'
+    },
+    {
+      title: 'Title 6',
+      img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'
+    },  
+    {
+      title: 'Title 6',
+      img: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'
+    },
+  ];
 
 
 export const Main = (props) => {
@@ -59,12 +97,6 @@ useEffect(async() => {
       setLoading(true);
       await axios.get(apiUrl).then((res) => {
         console.log(res);
-        res.data.allTokensInfo.map(async(result, idx) => {
-          let imgData = await Base64(result.dataBuffer);
-          res.data.allTokensInfo[idx].type = imgData[0];
-          res.data.allTokensInfo[idx].imageFile = imgData[1];
-
-        })
         setNftData(res.data.allTokensInfo); 
         console.log(res.data.allTokensInfo);
       });
@@ -76,7 +108,7 @@ useEffect(async() => {
   } 
 
   callNftData();
-  
+  console.log(data)
   console.log(nftData);
 
 }, []);
@@ -137,15 +169,14 @@ useEffect(async() => {
             }}
             dataSource={nftData}
             renderItem={item => (
-              <Link to ={{
-                  pathname: '/detail',
-                  state: {item}
-              }}> 
+              <Link to={{
+                pathname: '/detail',
+                state: {item}
+              }}>
               <List.Item className="card_object">
                 <Card 
                   cover = {
-                    <img src={"data:image/"+item.dataExt+";base64," + toBase64(item.dataBuffer)} alt="NFT" height="350px;"/>
-                    // <img src={"data:image/"+item.type+";base64," + item.imageFile} alt="NFT" height="350px;"/>
+                    <img src={"data:image/png;base64," + toBase64(item.dataBuffer)} alt="NFT" height="350px;"/>
                     // <img src= "data:image/png;base64,"/>
                   }
                   style={{textAlign: 'left'}}
@@ -154,19 +185,46 @@ useEffect(async() => {
                 <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" 
                   style={{margin: '2%'}}
                 /> 
-                <span className="nftowner"> @{item.tokenOwner} </span>
+                <span className="nftowner"> @HyeonHui </span>
                 
                     {/* <Card title= "Current bid"> 2312313</Card> */}
                   </Card>
                     <div className="purchaseinfo" >
-                      <div className="information"> <span className="bid"> Current bid </span>  <span className="time"> Token ID </span>  </div>
-                      <div className="realdata"><span className="bid">{item.tokenPrice}</span> <span className="time"> {item.tokenId}</span></div>
+                      <div className="information"> <span className="bid"> Current bid </span>  <span className="time"> Ending in </span>  </div>
+                      <div className="realdata"><span className="bid">a</span> <span className="time"> aa</span></div>
                     </div>
               </List.Item>
-              </Link>
             )}
           />
-         
+            {/* <section>
+              <h3>NFT List </h3>
+              <div className="nftImage"> 
+                  <ImgBox className="imgBox">
+                    <div className="imgDescription">NFT 1 </div>
+                  </ImgBox>
+                <ImgBox className="imgBox">
+                    <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                    <div className="imgDescription">adsdas </div>
+                </ImgBox>
+                <ImgBox className="imgBox">
+                    <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                    <div className="imgDescription">adsdas </div>
+                </ImgBox>
+                <ImgBox className="imgBox">
+                    <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                    <div className="imgDescription">adsdas </div>
+                </ImgBox>
+                <ImgBox className="imgBox">
+                    <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                    <div className="imgDescription">adsdas </div>
+                </ImgBox>                    
+                <ImgBox className="imgBox">
+                    <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                    <div className="imgDescription">adsdas </div>
+                </ImgBox>
+
+              </div>
+            </section> */}
         </div>
         </div>
 
@@ -177,6 +235,28 @@ useEffect(async() => {
 </Layout>
 )
 }
+
+
+
+
+// class main extends Component {
+//     state = {
+//        collapsed: false,
+//      };
+    
+    
+//      onCollapse = (collapsed) => {
+//        this.setState({ collapsed });
+//      }
+
+//     render(){
+//       useEffect(()=> {
+
+//       })
+        
+//     }
+
+// }
 
 export default Main;
 

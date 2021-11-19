@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Layout, Menu, Breadcrumb, Icon, Button, Popover } from 'antd';
 import Main from './components/main';
+import detail from './components/NFT/detail';
 import photo from './components/NFT/photo';
 import video from './components/NFT/video';
 import 'antd/dist/antd.css';
@@ -33,6 +34,7 @@ class App extends Component {
             <Route exact path='/' component={login}/>
             <Route exact path='/login' component={login}/>
             <Route exact path='/main' component={Main}/>
+            <Route exact path='/detail' component={detail}/>
             <Route exact path='/a' component={Main}/>
             <Route exact path='/b' component={Main}/>
             <Route exact path='/NFT/photo' component={photo}/>
