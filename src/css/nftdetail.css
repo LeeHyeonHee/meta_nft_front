@@ -13,6 +13,13 @@
     margin: auto;
 }
 
+.nftVideo {
+    max-height: 560px;
+    width: auto;
+    display: block;
+    margin: auto;
+}
+
 .profileLine {
     width: 100%;
     height: 50px;
@@ -29,12 +36,14 @@
     padding-left: 10px;
     padding-top: 5px;
     /* min-height: 280; */
-    background: #fff;
+    background: #2a3434;
     border-radius: 9999px;
     transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1) 0s;
+    color: #fff;
+    text-align: left;
 }
 
-span {
+.detailSpan {
     margin-left: 20px;    
 }
 
@@ -54,10 +63,11 @@ span {
     width: 100%;
     height: 100%;
     flex: 1;
+    text-align: left;
 }
 
 .priceData {
-    flex: 1;
+    flex: 2;
     text-align: center;
     font-family: 'Roboto Mono', monospace;
 
@@ -65,17 +75,41 @@ span {
 
 .pricetable {
     box-sizing: border-box;
-    width: 80%;
+    width: 95%;
+    margin-left: 20px;
     border: black 1px;
     height: 340px;
     border-radius: 10px;
     box-shadow: rgb(10 10 10 / 5%) 0px 10px 20px;    
-    display: inline-block;
 }
 
+.pricetable > div {
+    height: 33%;
+}
 .priceup {
     height: 50%;
     display: flex;
+}
+
+.badge {
+    box-sizing: border-box;
+    width: 300px;
+    border-radius: 10px;
+    height: 55px;
+    border: solid black 1px;
+    box-shadow: rgb(10, 10, 10 / 5%) 0px 10px 20px;
+    margin-top: 10px;
+    vertical-align: "middle";
+    padding-top: 10px;
+    cursor: pointer;
+}
+
+.badge > img {
+    margin-left: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
 }
 
 .pricedown {
@@ -86,6 +120,42 @@ span {
     border-color: var(--theme-ui-colors-black-10, #E6E6E6);
     box-sizing: border-box;
     display: table;
+}
+
+.tokenPriceField {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+}
+
+.tokenPriceField > div {
+    width: 100%;
+}
+
+.tokenIdField {
+    width: 100%;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-color:#a5a7a7;
+    box-sizing: border-box;
+    display: flex;
+}
+
+.tokenIdField > div {
+    width: 100%;
+}
+
+.tokenUriField {
+    width: 100%;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-color:#a5a7a7;
+    box-sizing: border-box;
+    display: flex;
+}
+
+.tokenUriField > div {
+    width: 100%;
 }
 
 .pricenumber{
@@ -126,4 +196,40 @@ span {
     display: table-cell;
     vertical-align: middle;
     width: 100%;
+}
+
+.fieldTitle {
+    font-weight: bold;
+    display: table;
+    font-size: 25px;
+    flex: 1.6;
+}
+
+.fieldTitle > p {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.fieldData {
+    display: table;
+    flex: 2;
+}
+
+.fieldData > p {
+    display: table-cell;
+    vertical-align: middle;
+    word-break: break-all;
+    padding: 0px 20px;
+    font-size: 18px;
+}
+
+.fieldDescription {
+    display: table;
+    flex: 3;
+}
+
+.fieldDescription > p {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0px 20px;
 }

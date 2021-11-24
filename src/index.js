@@ -2,22 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import App_Login from './App_login';
 import reportWebVitals from './reportWebVitals';
-import { Provider } from 'react-redux';
-import { applyMiddleware, createStore } from 'redux';
-import promiseMiddlerware from 'redux-promise';
 import { CookiesProvider } from 'react-cookie';
-import reduxThunk from 'redux-thunk';
-import login from './components/login/login';
-import { getCookie } from './components/utils/useCookie';
 
-const createStoreWidthMiddleware = applyMiddleware(
-  promiseMiddlerware,
-  reduxThunk
-)(createStore);
-
-const isLogined = getCookie('userId');
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,19 +1,19 @@
-import React, { Component, useEffect, useState } from 'react';
-import ReactDOM from "react-dom";
-import { Breadcrumb, Layout, Menu, List, Card, Avatar } from "antd";
+import React, { useEffect, useState } from 'react';
+import { Layout, List, Card, Avatar, Checkbox, Input, Button, Pagination } from "antd";
 import "../css/main.css";
 import "antd/dist/antd.css"
-import styled from "styled-components"
 import axios from "axios";
 import { MainFooter } from './Footer';
 import { MainHeader } from './header';
-import { SideMenu } from './SideMenu';
-import Icon, { MoneyCollectOutlined } from '@ant-design/icons';
+import Icon from '@ant-design/icons';
 import Loader from './utils/Loader';
+import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import filetype from "file-type";
+import Search from 'antd/lib/input/Search';
+import getProxy from "../Proxy";
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Content } = Layout;
 
 const { Meta } = Card;
 
@@ -23,13 +23,6 @@ const HeartSvg = () => (
   </svg>
 );
 
-const ImgBox = styled.article`
-  border: 1px solid lightgray;
-  
-  width: 100%;
-  height: 200px;
-  box-sizing: border-box;
-`;
 
 
 const toBase64 = (arr) => {
@@ -43,43 +36,53 @@ const Base64 = async (arr) => {
   return [fileType.ext, a.toString('base64')];
 }
   
-  const HeartIcon = props => <Icon component={HeartSvg} {...props} />
+const HeartIcon = props => <Icon component={HeartSvg} {...props} />
 
 
 export const Main = (props) => {
   
   const [loading, setLoading] = useState(null);
   const [nftData, setNftData] = useState([]);
-  const apiUrl = "http://10.0.3.115:4100/api/nft-agent/getAllTokensInfo";
+  const [cookies, setCookie, removeCookie] = useCookies(['userId']);
+  const apiUrl = getProxy(4100) + "/api/nft-agent/getAllTokensInfo";
+  const tokenUrl = getProxy(4200) + "/api/erc20/balanceOf";
 
-useEffect(async() => {
-  const callNftData = async() => {
-    try{
+  useEffect(async() => {
 
-      setLoading(true);
-      await axios.get(apiUrl).then((res) => {
-        console.log(res);
-        res.data.allTokensInfo.map(async(result, idx) => {
-          let imgData = await Base64(result.dataBuffer);
-          res.data.allTokensInfo[idx].type = imgData[0];
-          res.data.allTokensInfo[idx].imageFile = imgData[1];
-
+    const getTokenBalance = async() => {
+      try {
+        await axios.post(tokenUrl, {
+          owner: cookies.user_Id
+        }).then((res) => {
+          setCookie("userToken", res.data.balance);
         })
-        setNftData(res.data.allTokensInfo); 
-        console.log(res.data.allTokensInfo);
-      });
-    }catch(e){
-      console.log(e);
-      // throw (e);
+      } catch(e) {
+        console.log(e);
+      }
     }
-    setLoading(false);
-  } 
 
-  callNftData();
-  
-  console.log(nftData);
+    const callNftData = async() => {
+      try{
+        setLoading(true);
+        await axios.get(apiUrl).then(async(res) => {
+          res.data.allTokensInfo.map(async(result, idx) => {
+            let imgData = await Base64(result.dataBuffer);
+            res.data.allTokensInfo[idx].type = imgData[0];
+            res.data.allTokensInfo[idx].imageFile = imgData[1];
 
-}, []);
+          })
+          setNftData(res.data.allTokensInfo); 
+        });
+      }catch(e){
+        console.log(e);
+        // throw (e);
+      }
+      setLoading(false);
+    } 
+
+    getTokenBalance();
+    callNftData();
+  }, []);
 
   
   if (loading) return( <Loader type="spin" color="#87ceeb" message={"Loading to NFT"} />);
@@ -88,96 +91,140 @@ useEffect(async() => {
   return(
 
     <Layout style={{ minHeight: '120vh' }}>
-      <Sider
-      collapsible
-      // collapsed={this.state.collapsed}
-      // onCollapse={this.onCollapse}
-      >
-        <div className="App-logo" />
-        <SideMenu />
-      </Sider>
-
       <Layout>
-      
-          <MainHeader/>
+        <MainHeader/>
           <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-                  <Breadcrumb.Item>메인페이지</Breadcrumb.Item>
-                  <Breadcrumb.Item>메인</Breadcrumb.Item>
-              </Breadcrumb>
-
-        <div style={{width: '100%', height: '100%', textAlign: 'center'}}> 
-        <div style={{width: '80%', display: 'inline-block'}}>
-
-        {/* <div className="userInfo">
-          <div className="token">
-          
-            <h2> <MoneyCollectOutlined twoToneColor="#52c41a" style={{marginTop: '13px', marginLeft: '10px'}}/> &nbsp; My Tokens</h2>
-
-            <div className="ammount">
-              7,123,542              <span>TKN</span>
-            </div>
-          </div>
-          <div>
-
-          </div>
-        </div> */}
-        <h2 style={{textAlign: 'left'}}> <HeartIcon style={{color: 'hotpink'}} /> Hot NFT !  </h2>
-        <hr/>
-        <br/>
-        <List
-            grid={{
-              gutter: 16,
-              xs: 1,
-              sm: 2,
-              md: 3,
-              lg: 3,
-              xl: 3,
-              xxl: 4,
-            }}
-            dataSource={nftData}
-            renderItem={item => (
-              <Link to ={{
-                  pathname: '/detail',
-                  state: {item}
-              }}> 
-              <List.Item className="card_object">
-                <Card 
-                  cover = {
-                    <img src={"data:image/"+item.dataExt+";base64," + toBase64(item.dataBuffer)} alt="NFT" height="350px;"/>
-                    // <img src={"data:image/"+item.type+";base64," + item.imageFile} alt="NFT" height="350px;"/>
-                    // <img src= "data:image/png;base64,"/>
-                  }
-                  style={{textAlign: 'left'}}
-                >
-                <Meta title={item.tokenDescription} />
-                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" 
-                  style={{margin: '2%'}}
-                /> 
-                <span className="nftowner"> @{item.tokenOwner} </span>
-                
-                    {/* <Card title= "Current bid"> 2312313</Card> */}
-                  </Card>
-                    <div className="purchaseinfo" >
-                      <div className="information"> <span className="bid"> Current bid </span>  <span className="time"> Token ID </span>  </div>
-                      <div className="realdata"><span className="bid">{item.tokenPrice}</span> <span className="time"> {item.tokenId}</span></div>
+            <div style={{width: '100%', height: '100%', textAlign: 'center'}}> 
+              <div style= {{display:'inline-block', width: '100%'}}> 
+                <div style= {{display: 'inline-block', width: '15%', height: '100%', textAlign:'left', verticalAlign: 'top', marginTop: '30px'}}>
+                  <Link to={{
+                    pathname: '/main'
+                  }}>
+                    <h2 style= {{marginLeft:'15px'}}>
+                      On Market
+                    </h2>
+                  </Link>
+                  <hr/>
+                  <h2 style= {{marginLeft:'15px'}}>
+                    Status
+                  </h2>
+                  <div >
+                    <Checkbox style={{fontSize:'20px'}}> Buy Now </Checkbox>
+                    <br/>
+                    <Checkbox style={{fontSize:'20px'}}> In Auction </Checkbox>
+                    <br/>
+                    <Checkbox style={{fontSize:'20px'}}> Has Offers </Checkbox>
+                  </div>
+                  <hr/>
+                  <h2 style= {{marginLeft:'15px'}}>
+                    Lowest Ask
+                  </h2>
+                  <Input placeholder="Minimum    NHC" allowClear style={{paddingLeft: '10px', paddingRight: '10px'}}/>
+                  <Input placeholder="Maximum   NHC" allowClear style={{paddingLeft: '10px', paddingRight: '10px'}}/>
+                  <Button style={{width:'93%', textAlign: 'center', marginTop:'10px', marginLeft: '10px', marginBottom: '10px'}}  disabled>
+                    Apply 
+                  </Button>
+                  <hr/>
+                  <h2 style= {{marginLeft:'15px'}}>
+                    Filter
+                  </h2>
+                  <Search placeholder="Search Creator" size="default" style={{paddingLeft: '10px', paddingRight: '10px'}}/>
+                  <Link to={{
+                    pathname: '/NFT/photo'
+                  }}>
+                    <h2 style= {{marginLeft:'15px', marginTop: '25px'}}>
+                      User Collection
+                    </h2>
+                  </Link>
+                  <hr/>
+                </div> 
+                <div style={{display:'inline-block', width: '80%', height:'100%'}}>
+                  <div style={{width: '84%', display: 'inline-block'}}>
+                    <h2 style={{textAlign: 'left', marginTop: '30px'}}>
+                      {/* <HeartIcon style={{color: 'hotpink'}} /> */}
+                    Hot artworks   </h2>
+                    <hr/>
+                    <br/>
+                    <List
+                        grid={{
+                          gutter: 16,
+                          xs: 1,
+                          sm: 2,
+                          md: 3,
+                          lg: 3,
+                          xl: 3,
+                          xxl: 4,
+                        }}
+                        dataSource={nftData}
+                        renderItem={item => (
+                          <Link to ={{
+                              pathname: '/detail',
+                              state: {item}
+                          }}> 
+                          <List.Item className="card_object">
+                            {(item.dataExt === 'png'
+                              || item.dataExt === 'jpeg'
+                              || item.dataExt === 'jpg'
+                              || item.dataExt === 'bmp'
+                              || item.dataExt === 'svg')
+                            &&
+                              <Card 
+                                cover = {
+                                  <img src={`data:image/${item.dataExt};base64,${toBase64(item.dataBuffer)}`} alt="NFT" height="350px;" />
+                                  // <img src={"data:image/"+item.type+";base64," + item.imageFile} alt="NFT" height="350px;"/>
+                                  // <img src= "data:image/png;base64,"/>
+                                }
+                                style={{textAlign: 'left'}}
+                              >
+                                <Meta title={item.tokenDescription} />
+                                <Avatar src={"/images/" + item.tokenOwner + ".png"} 
+                                  style={{margin: '2%'}}
+                                  /> 
+                                <span className="nftowner"> @{item.tokenOwner} </span>
+                              </Card>
+                            }
+                            {!(item.dataExt === 'png'
+                              || item.dataExt === 'jpeg'
+                              || item.dataExt === 'jpg'
+                              || item.dataExt === 'bmp'
+                              || item.dataExt === 'svg')
+                            &&
+                              <Card 
+                                cover = {
+                                  <video src={"data:video/"+item.dataExt+";base64," + toBase64(item.dataBuffer)} alt="NFT" height="350px;" autoPlay loop muted />
+                                  // <img src={"data:image/"+item.dataExt+";base64," + toBase64(item.dataBuffer)} alt="NFT" height="350px;"/>
+                                  // <img src={"data:image/"+item.type+";base64," + item.imageFile} alt="NFT" height="350px;"/>
+                                  // <img src= "data:image/png;base64,"/>
+                                }
+                                style={{textAlign: 'left'}}
+                              >
+                                <Meta title={item.tokenDescription} />
+                                <Avatar src={"/images/" + item.tokenOwner + ".png"}
+                                  style={{margin: '2%'}}
+                                  /> 
+                                <span className="nftowner"> @{item.tokenOwner} </span>
+                                
+                                    {/* <Card title= "Current bid"> 2312313</Card> */}
+                              </Card>
+                            }
+                                <div className="purchaseinfo" >
+                                  <div className="information"> <span className="bid"> Current Bid </span>   </div>
+                                  <div className="realdata"><span className="bid">{item.tokenPrice} NHC</span> </div>
+                                </div>
+                          </List.Item>
+                          </Link>
+                        )}
+                      /> {/* <Pagination defaultCurrent={1} total={50} pageSize={9}/> */}
                     </div>
-              </List.Item>
-              </Link>
-            )}
-          />
-         
-        </div>
-        </div>
-
-    
-    </Content>
-    <MainFooter />
-  </Layout>
-</Layout>
-)
-}
-
+                  </div>
+                </div>
+              </div>
+            </Content>
+          <MainFooter />
+        </Layout>
+      </Layout>
+    )
+  }
 export default Main;
 
 

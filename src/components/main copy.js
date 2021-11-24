@@ -88,7 +88,7 @@ export const Main = (props) => {
   
   const [loading, setLoading] = useState(null);
   const [nftData, setNftData] = useState([]);
-  const apiUrl = "http://10.0.3.115:4100/api/nft-agent/getAllTokensInfo";
+  const apiUrl = "/api/nft-agent/getAllTokensInfo";
 
 useEffect(async() => {
   const callNftData = async() => {
@@ -96,9 +96,7 @@ useEffect(async() => {
 
       setLoading(true);
       await axios.get(apiUrl).then((res) => {
-        console.log(res);
         setNftData(res.data.allTokensInfo); 
-        console.log(res.data.allTokensInfo);
       });
     }catch(e){
       console.log(e);
@@ -108,8 +106,6 @@ useEffect(async() => {
   } 
 
   callNftData();
-  console.log(data)
-  console.log(nftData);
 
 }, []);
 
